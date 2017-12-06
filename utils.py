@@ -96,5 +96,6 @@ class SingleImage(Dataset):
         folders = os.listdir(self.imageFolder)
         count =0 
         for i in folders :
-            count += len(os.listdir(os.path.join(self.imageFolder,i)))
+            if os.path.isdir(os.path.join(self.imageFolder,i)):
+                count += len(os.listdir(os.path.join(self.imageFolder,i)))
         return count

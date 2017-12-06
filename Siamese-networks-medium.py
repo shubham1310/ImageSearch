@@ -141,7 +141,7 @@ else:
     labels=[]
     for i, data in enumerate(train_dataloader,0):
         img0, label = data
-        img0, label = Variable(img0).cuda(), label
+        img0 = Variable(img0).cuda()
         output,_ = convnet(img0,img0)
         for j in range(len(label)):
             # print(output[j].data.cpu().numpy())
@@ -168,11 +168,12 @@ else:
     pred=[]
     for i, data in enumerate(test_dataloader,0):
         img0, label = data
-        img0, label = Variable(img0).cuda(), label
+        img0= Variable(img0).cuda()
         output,_ = convnet(img0,img0)
         for j in range(len(label)):
             act.append(label[j])
-            pred.append(neigh.predict(output[j]))
+            x=neigh.predict([output[j].data.cpu().numpy()])
+            pred.append(x[0])
         if i%100==0:
             print('Prediction done for %d/%d'%(i,len(train_dataloader)))
     print(classification_report(act, pred, target_names=target_names))
