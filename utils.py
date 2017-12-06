@@ -27,7 +27,7 @@ class PairDataset(Dataset):
 
         not_same_class = random.uniform(0,1) 
         folder2=folder
-        if not_same_class < 0.8:
+        if not_same_class < 0.5:
             folder2 = random.choice(folders)
             while not(os.path.isdir(self.imageFolder + folder2)) and not(folder == folder2):
                 folder2 = random.choice(folders)

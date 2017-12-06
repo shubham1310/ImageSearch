@@ -4,6 +4,7 @@ from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 
+fina_size = 128
 
 class SiameseNetwork2(nn.Module):
     def __init__(self):
@@ -17,233 +18,234 @@ class SiameseNetwork2(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(1024, 256),
             nn.ReLU(inplace=True),
-            nn.Linear(256, 128))
+            nn.Linear(256, fina_size))
 
-    def forward_once(self, x):
+    def forward(self, x):
         output = self.vgg.features(x);# print(x.size())
         output = output.view(output.size()[0], -1);# print(output.size())
         output = self.fc(output)
         return output
 
-    def forward(self, input1, input2):
-        output1 = self.forward_once(input1)
-        output2 = self.forward_once(input2)
-        return output1, output2
+    # def forward(self, input1, input2):
+    #     output1 = self.forward_once(input1)
+    #     output2 = self.forward_once(input2)
+    #     return output1, output2
 
 
 class DotProduct(torch.nn.Module):
 
-    def __init__(self):
+    def __init__(self,losstype):
         super(DotProduct, self).__init__()
+        self.losstype =losstype
 
     def forward(self, output1, output2, label):
         output1 =  F.normalize(output1)
         output2 =  F.normalize(output2)
-        logis_criterion = nn.MSELoss().cuda()
-        dot = torch.bmm(output1.view(-1, 1, 128), output2.view(-1, 128, 1))
-        y = Variable(torch.Tensor([0.999]).float()).cuda()
+        if self.losstype==1:
+            logis_criterion = nn.MSELoss().cuda()
+            y = Variable(torch.Tensor([1]).float()).cuda()
+        else:
+            logis_criterion = nn.BCELoss().cuda()
+            y = Variable(torch.Tensor([0.999999]).float()).cuda()
+            
+        dot = torch.bmm(output1.view(-1, 1, fina_size), output2.view(-1, fina_size, 1))        
         z = Variable(torch.Tensor([0.5]).float()).cuda()
         normdot = dot + y.expand_as(dot)
         finaldot = normdot * z.expand_as(normdot)
-        # print(finaldot)
-        # print(label)
-        # for i in range(finaldot.size()[0]):
-        #     print(finaldot[i])
-        #     print(label[i])
         loss = torch.mean( logis_criterion( finaldot ,label))
         return loss
 
 
-class SiameseNetwork(nn.Module):
-    def __init__(self):
-        super(SiameseNetwork, self).__init__()
+# class SiameseNetwork(nn.Module):
+#     def __init__(self):
+#         super(SiameseNetwork, self).__init__()
 
-        self.cnn = nn.Sequential(
-            nn.Conv2d(3, 64, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(64),
-            nn.Dropout2d(p=.2),
+#         self.cnn = nn.Sequential(
+#             nn.Conv2d(3, 64, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(64),
+#             nn.Dropout2d(p=.2),
             
-            nn.Conv2d(64, 64, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(64),
-            nn.Dropout2d(p=.2),
-            nn.MaxPool2d((2,2), stride=(2,2)),
+#             nn.Conv2d(64, 64, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(64),
+#             nn.Dropout2d(p=.2),
+#             nn.MaxPool2d((2,2), stride=(2,2)),
 
 
-            nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(128),
-            nn.Dropout2d(p=.2),
+#             nn.Conv2d(64, 128, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(128),
+#             nn.Dropout2d(p=.2),
 
-            nn.Conv2d(128, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(128),
-            nn.Dropout2d(p=.2),
-            nn.MaxPool2d((2,2), stride=(2,2)),
-
-
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(256),
-            nn.Dropout2d(p=.2),
-
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(256),
-            nn.Dropout2d(p=.2),
-            nn.MaxPool2d((2,2), stride=(2,2)),
+#             nn.Conv2d(128, 128, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(128),
+#             nn.Dropout2d(p=.2),
+#             nn.MaxPool2d((2,2), stride=(2,2)),
 
 
-            nn.Conv2d(256, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(512),
-            nn.Dropout2d(p=.2),
+#             nn.Conv2d(128, 256, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(256),
+#             nn.Dropout2d(p=.2),
 
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(512),
-            nn.Dropout2d(p=.2),
-            nn.MaxPool2d((2,2), stride=(2,2)),
+#             nn.Conv2d(256, 256, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(256),
+#             nn.Dropout2d(p=.2),
+#             nn.MaxPool2d((2,2), stride=(2,2)),
 
 
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(512),
-            nn.Dropout2d(p=.2),
+#             nn.Conv2d(256, 512, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(512),
+#             nn.Dropout2d(p=.2),
 
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(512),
-            nn.Dropout2d(p=.2),
-            nn.MaxPool2d((2,2), stride=(2,2)),
+#             nn.Conv2d(512, 512, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(512),
+#             nn.Dropout2d(p=.2),
+#             nn.MaxPool2d((2,2), stride=(2,2)),
+
+
+#             nn.Conv2d(512, 512, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(512),
+#             nn.Dropout2d(p=.2),
+
+#             nn.Conv2d(512, 512, 3, padding=1),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(512),
+#             nn.Dropout2d(p=.2),
+#             nn.MaxPool2d((2,2), stride=(2,2)),
             
-        )
+#         )
 
 
-        self.fc = nn.Sequential(
-            nn.Linear(512*7*7, 1024),
-            nn.ReLU(inplace=True),
-            nn.Linear(1024, 256),
-            nn.ReLU(inplace=True),
+#         self.fc = nn.Sequential(
+#             nn.Linear(512*7*7, 1024),
+#             nn.ReLU(inplace=True),
+#             nn.Linear(1024, 256),
+#             nn.ReLU(inplace=True),
 
-            nn.Linear(256, 128))
+#             nn.Linear(256, 128))
 
-    def forward_once(self, x):
+#     def forward_once(self, x):
 
-        output = self.cnn(x)
-        output = output.view(output.size()[0], -1)
-        output = self.fc(output)
-        return output
+#         output = self.cnn(x)
+#         output = output.view(output.size()[0], -1)
+#         output = self.fc(output)
+#         return output
 
-    def forward(self, input1, input2):
-        output1 = self.forward_once(input1)
-        output2 = self.forward_once(input2)
-        return output1, output2
-
-
+#     def forward(self, input1, input2):
+#         output1 = self.forward_once(input1)
+#         output2 = self.forward_once(input2)
+#         return output1, output2
 
 
 
-class Deconv(nn.Module):
-    def __init__(self):
-        super(Deconv, self).__init__()
 
-        self.dconv1 = nn.ConvTranspose2d(128, 64, 3, stride=3,output_padding=1)
-        self.conv1 = nn.Sequential( 
-                        nn.Conv2d(64, 64, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(64),
-                        nn.Dropout2d(p=.2))
-        self.conv2 =   nn.Sequential(   
-                        nn.Conv2d(64, 32, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(32),
-                        nn.Dropout2d(p=.2))
 
-        self.dconv2 =  nn.ConvTranspose2d(32, 32, 3, stride=3, padding=1)
+# class Deconv(nn.Module):
+#     def __init__(self):
+#         super(Deconv, self).__init__()
 
-        self.conv3 = nn.Sequential(
-                        nn.Conv2d(32, 16, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(16),
-                        nn.Dropout2d(p=.2),
-                        )
-        self.conv4 = nn.Sequential(
-                        nn.Conv2d(16, 16, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(16),
-                        nn.Dropout2d(p=.2),
-                        )
+#         self.dconv1 = nn.ConvTranspose2d(128, 64, 3, stride=3,output_padding=1)
+#         self.conv1 = nn.Sequential( 
+#                         nn.Conv2d(64, 64, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(64),
+#                         nn.Dropout2d(p=.2))
+#         self.conv2 =   nn.Sequential(   
+#                         nn.Conv2d(64, 32, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(32),
+#                         nn.Dropout2d(p=.2))
 
-        self.dconv3 =  nn.ConvTranspose2d(16, 16, 4,stride=3)
+#         self.dconv2 =  nn.ConvTranspose2d(32, 32, 3, stride=3, padding=1)
 
-        self.conv5 =  nn.Sequential(
-                        nn.Conv2d(16, 8, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(8),
-                        nn.Dropout2d(p=.2),
-                        )
-        self.conv6 =  nn.Sequential(
-                        nn.Conv2d(8, 8, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(8),
-                        nn.Dropout2d(p=.2),
-                        )
+#         self.conv3 = nn.Sequential(
+#                         nn.Conv2d(32, 16, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(16),
+#                         nn.Dropout2d(p=.2),
+#                         )
+#         self.conv4 = nn.Sequential(
+#                         nn.Conv2d(16, 16, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(16),
+#                         nn.Dropout2d(p=.2),
+#                         )
 
-        self.dconv4 = nn.ConvTranspose2d(8, 8, 3, stride=4, padding = 2)
+#         self.dconv3 =  nn.ConvTranspose2d(16, 16, 4,stride=3)
 
-        self.conv7 = nn.Sequential(
-                        nn.Conv2d(8, 4, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(4),
-                        nn.Dropout2d(p=.2))
-        self.conv8 = nn.Sequential(
-                        nn.Conv2d(4, 4, 3, padding=1),
-                        nn.ReLU(inplace=True),
-                        nn.BatchNorm2d(4),
-                        nn.Dropout2d(p=.2))
+#         self.conv5 =  nn.Sequential(
+#                         nn.Conv2d(16, 8, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(8),
+#                         nn.Dropout2d(p=.2),
+#                         )
+#         self.conv6 =  nn.Sequential(
+#                         nn.Conv2d(8, 8, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(8),
+#                         nn.Dropout2d(p=.2),
+#                         )
 
-        self.dconv5  = nn.ConvTranspose2d(4, 4, 3, stride=2, padding =6,output_padding=1)
+#         self.dconv4 = nn.ConvTranspose2d(8, 8, 3, stride=4, padding = 2)
 
-        self.conv9 = nn.Sequential(
+#         self.conv7 = nn.Sequential(
+#                         nn.Conv2d(8, 4, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(4),
+#                         nn.Dropout2d(p=.2))
+#         self.conv8 = nn.Sequential(
+#                         nn.Conv2d(4, 4, 3, padding=1),
+#                         nn.ReLU(inplace=True),
+#                         nn.BatchNorm2d(4),
+#                         nn.Dropout2d(p=.2))
 
-            nn.Conv2d(4, 3, 3),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(3),
-            nn.Dropout2d(p=.2),
-        )
+#         self.dconv5  = nn.ConvTranspose2d(4, 4, 3, stride=2, padding =6,output_padding=1)
 
-        self.conv10 = nn.Sequential(
+#         self.conv9 = nn.Sequential(
 
-            nn.Conv2d(3, 3, 3),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm2d(3),
-            nn.Dropout2d(p=.2),
-        )
+#             nn.Conv2d(4, 3, 3),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(3),
+#             nn.Dropout2d(p=.2),
+#         )
 
-    def forward(self, input):
-        # print(input.size())
-        output = input.view(input.size()[0],128,1,1);#print(output.size())
-        output = self.dconv1(output);#print(output.size())
-        output = self.conv1(output);#print(output.size())
-        output = self.conv2(output);#print(output.size())
+#         self.conv10 = nn.Sequential(
 
-        output = self.dconv2(output);#print(output.size())
-        output = self.conv3(output);#print(output.size())
-        output = self.conv4(output);#print(output.size())
+#             nn.Conv2d(3, 3, 3),
+#             nn.ReLU(inplace=True),
+#             nn.BatchNorm2d(3),
+#             nn.Dropout2d(p=.2),
+#         )
 
-        output = self.dconv3(output);#print(output.size())
-        output = self.conv5(output);#print(output.size())
-        output = self.conv6(output);#print(output.size())
+#     def forward(self, input):
+#         # print(input.size())
+#         output = input.view(input.size()[0],128,1,1);#print(output.size())
+#         output = self.dconv1(output);#print(output.size())
+#         output = self.conv1(output);#print(output.size())
+#         output = self.conv2(output);#print(output.size())
 
-        output = self.dconv4(output);#print(output.size())
-        output = self.conv7(output);#print(output.size())
-        output = self.conv8(output);#print(output.size())
+#         output = self.dconv2(output);#print(output.size())
+#         output = self.conv3(output);#print(output.size())
+#         output = self.conv4(output);#print(output.size())
 
-        output = self.dconv5(output);#print(output.size())
-        output = self.conv9(output);#print(output.size())
-        output = self.conv10(output);#print(output.size())
-        return output
+#         output = self.dconv3(output);#print(output.size())
+#         output = self.conv5(output);#print(output.size())
+#         output = self.conv6(output);#print(output.size())
+
+#         output = self.dconv4(output);#print(output.size())
+#         output = self.conv7(output);#print(output.size())
+#         output = self.conv8(output);#print(output.size())
+
+#         output = self.dconv5(output);#print(output.size())
+#         output = self.conv9(output);#print(output.size())
+#         output = self.conv10(output);#print(output.size())
+#         return output
 
 

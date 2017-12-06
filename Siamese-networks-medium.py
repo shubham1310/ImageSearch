@@ -22,14 +22,15 @@ from tensorboard_logger import configure, log_value
 
 from utils import PairDataset, SingleImage
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchsize', type=int, default=16, help='input batch size')
-parser.add_argument('--nEpochs', type=int, default=50, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
+parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 opt = parser.parse_args()
 print(opt)
 
@@ -39,8 +40,8 @@ except OSError:
     pass
 
 
-training_dir = "./datadiv/training/"
-testing_dir = "./datadiv/testing/"
+training_dir = "./newdata/training/"
+testing_dir = "./newdata/testing/"
 
 
 
@@ -55,7 +56,7 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2().cuda()
-criterion = DotProduct().cuda()
+criterion = DotProduct(opt.losstype).cuda()
 
 
 if opt.netG != '':
@@ -107,7 +108,7 @@ if opt.train:
         for i, data in enumerate(train_dataloader,0):
             img0, img1 , label = data
             img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
-            output1,output2 = convnet(img0,img1)
+            output1,output2 = convnet(img0),convnet(img1)
             convnet.zero_grad()
             loss= criterion(output1,output2,label)
             loss.backward()
@@ -142,7 +143,7 @@ else:
     for i, data in enumerate(train_dataloader,0):
         img0, label = data
         img0 = Variable(img0).cuda()
-        output,_ = convnet(img0,img0)
+        output = convnet(img0)
         for j in range(len(label)):
             # print(output[j].data.cpu().numpy())
             # print(label[j])
@@ -169,7 +170,7 @@ else:
     for i, data in enumerate(test_dataloader,0):
         img0, label = data
         img0= Variable(img0).cuda()
-        output,_ = convnet(img0,img0)
+        output = convnet(img0)
         for j in range(len(label)):
             act.append(label[j])
             x=neigh.predict([output[j].data.cpu().numpy()])
@@ -177,8 +178,7 @@ else:
         if i%100==0:
             print('Prediction done for %d/%d'%(i,len(train_dataloader)))
     print(classification_report(act, pred, target_names=target_names))
-
-
+    print(accuracy_score(act, pred))
 
 
 
