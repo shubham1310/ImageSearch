@@ -20,11 +20,16 @@ import argparse
 from models import SiameseNetwork2, DotProduct #Deconv,
 from tensorboard_logger import configure, log_value
 
+from utils import PairDataset, SingleImage
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchsize', type=int, default=16, help='input batch size')
 parser.add_argument('--nEpochs', type=int, default=50, help='number of epochs to train for')
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
+parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
 opt = parser.parse_args()
 print(opt)
 
@@ -38,64 +43,6 @@ training_dir = "./datadiv/training/"
 testing_dir = "./datadiv/testing/"
 
 
-class PairDataset(Dataset):
-    
-    def __init__(self,imageFolder,transform=None):
-        self.imageFolder = imageFolder 
-        self.transform = transform
-        
-    def __getitem__(self,index):
-        folders = os.listdir(self.imageFolder)
-        folder = random.choice(folders)
-        while not(os.path.isdir(self.imageFolder + folder)) and folder[:5] == 'other':
-            folder = random.choice(folders)
-        folderpath = os.path.join(self.imageFolder,folder)
-        imgname = random.choice(os.listdir(folderpath))
-        while not(imgname[-1] =='g'):
-            imgname = random.choice(os.listdir(folderpath))
-        img0 = Image.open(os.path.join(folderpath,imgname))
-
-        not_same_class = random.uniform(0,1) 
-        folder2=folder
-        if not_same_class < 0.8:
-            folder2 = random.choice(folders)
-            while not(os.path.isdir(self.imageFolder + folder2)) and not(folder == folder2):
-                folder2 = random.choice(folders)
-            folderpath2 = os.path.join(self.imageFolder,folder2)
-        else:
-            folderpath2 = folderpath
-        imgname = random.choice(os.listdir(folderpath2))
-        while not(imgname[-1] =='g'):
-            imgname = random.choice(os.listdir(folderpath2))
-        img1 = Image.open(os.path.join(folderpath2,imgname))
-
-        if self.transform is not None:
-            img0 = self.transform(img0)
-            img1 = self.transform(img1)
-
-        return img0, img1 , torch.from_numpy(np.array([int(folder==folder2)],dtype=np.float32))
-
-    
-    def __len__(self):
-        folders = os.listdir(self.imageFolder)
-        count =0 
-        for i in folders :
-            count += len(os.listdir(os.path.join(self.imageFolder,i)))
-        return count
-
-        # count=[]
-        # countother=[]
-        # for i in folders :
-        #     if os.path.isdir(os.path.join(self.imageFolder,i)) and not(i[:5] == 'other'):
-        #         count.append(len(os.listdir(os.path.join(self.imageFolder,i))))
-        #     elif os.path.isdir(os.path.join(self.imageFolder,i)):
-        #         countother.append(len(os.listdir(os.path.join(self.imageFolder,i))))
-        # val=0
-        # couns= sum(count)
-        # ocouns = sum(countother)
-        # for i in count:
-        #     val += i * (couns-i + ocouns) + i * (i-1)/2
-        # return val
 
 configure('logs/genimage-' + str(opt.out), flush_secs=5)
 
@@ -143,30 +90,83 @@ if opt.netG != '':
 #     torch.save(deconvnet.state_dict(), '%s/netdconv%d.pth' % ('./savemodel/', epoch))
 
 
+if opt.train:
+    siamese_dataset = PairDataset(imageFolder=training_dir,
+                                transform=transform)
 
-siamese_dataset = PairDataset(imageFolder=training_dir,
-                            transform=transform)
+    train_dataloader = DataLoader(siamese_dataset,
+                            shuffle=True,
+                            num_workers=8,
+                            batch_size=opt.batchsize)
+    optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
 
-train_dataloader = DataLoader(siamese_dataset,
-                        shuffle=True,
-                        num_workers=8,
-                        batch_size=opt.batchsize)
-optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
+    iteration_number= 0
 
-iteration_number= 0
+    for epoch in range(0,opt.nEpochs):
+        for i, data in enumerate(train_dataloader,0):
+            img0, img1 , label = data
+            img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
+            output1,output2 = convnet(img0,img1)
+            convnet.zero_grad()
+            loss= criterion(output1,output2,label)
+            loss.backward()
+            optimizer.step()
+            if i %100 == 0 :
+                print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
+                iteration_number +=1
+                log_value('Netloss', loss.data[0], iteration_number)
+        torch.save(convnet.state_dict(), '%s/netconv%d.pth' % (opt.out, epoch))
+else:
+    folderenum={}
+    count=1
+    folders = os.listdir(training_dir)
+    target_names=['other']
+    for folder in folders:
+        if os.path.isdir(self.imageFolder + folder) and not(folder[:5] == 'other'):
+            folderenum[folder] = count
+            count+=1
+            target_names.append(folder)
+        elif os.path.isdir(self.imageFolder + folder):
+            folderenum[folder] = 0
 
-for epoch in range(0,opt.nEpochs):
+    single_dataset = SingleImage(imageFolder=training_dir, enumdict = folderenum
+                                transform=transform)
+
+    train_dataloader = DataLoader(single_dataset,
+                            shuffle=True,
+                            num_workers=8,
+                            batch_size=opt.batchsize)
+    images=[]
+    labels=[]
     for i, data in enumerate(train_dataloader,0):
-        img0, img1 , label = data
-        img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
-        output1,output2 = convnet(img0,img1)
-        convnet.zero_grad()
-        loss= criterion(output1,output2,label)
-        loss.backward()
-        optimizer.step()
-        if i %100 == 0 :
-            print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
-            iteration_number +=1
-            log_value('Netloss', loss.data[0], iteration_number)
-    torch.save(convnet.state_dict(), '%s/netconv%d.pth' % (opt.out, epoch))
+        img0, label = data
+        img0, label = Variable(img0).cuda(), label
+        output,_ = convnet(img0,img0)
+        for j in range(len(label)):
+            images.append(output[j].data)
+            labels.append(label[j])
+    neigh = KNeighborsClassifier(n_neighbors=count)
+    neigh.fit(images, labels)
+
+
+    single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum
+                                transform=transform)
+    test_dataloader = DataLoader(single_dataset,
+                shuffle=True,
+                num_workers=8,
+                batch_size=opt.batchsize)
+
+    act=[]
+    pred=[]
+    for i, data in enumerate(test_dataloader,0):
+        img0, label = data
+        img0, label = Variable(img0).cuda(), label
+        output,_ = convnet(img0,img0)
+        for j in range(len(label)):
+            act.append(label[j])
+            pred.append(neigh.predict(output[j]))
+
+    print(classification_report(act, pred, target_names=target_names)
+
+
 
