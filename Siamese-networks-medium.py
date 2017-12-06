@@ -56,11 +56,12 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 convnet = SiameseNetwork2().cuda()
 criterion = DotProduct().cuda()
-optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
+
 
 if opt.netG != '':
     convnet.load_state_dict(torch.load(opt.netG))
 
+# optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
 # singledata = dset.ImageFolder(root=training_dir,transform=transform)
 # dataloader = DataLoader(singledata, batch_size=train_batch_size, shuffle=True, num_workers=8)
 # l2criterion = nn.MSELoss().cuda()
@@ -122,15 +123,15 @@ else:
     folders = os.listdir(training_dir)
     target_names=['other']
     for folder in folders:
-        if os.path.isdir(self.imageFolder + folder) and not(folder[:5] == 'other'):
+        if os.path.isdir(training_dir + folder) and not(folder[:5] == 'other'):
             folderenum[folder] = count
             count+=1
             target_names.append(folder)
-        elif os.path.isdir(self.imageFolder + folder):
+        elif os.path.isdir(training_dir + folder):
             folderenum[folder] = 0
-
-    single_dataset = SingleImage(imageFolder=training_dir, enumdict = folderenum
-                                transform=transform)
+    print(folderenum)
+    print('Enumeration done')
+    single_dataset = SingleImage(imageFolder=training_dir, enumdict = folderenum, transform=transform)
 
     train_dataloader = DataLoader(single_dataset,
                             shuffle=True,
@@ -143,14 +144,21 @@ else:
         img0, label = Variable(img0).cuda(), label
         output,_ = convnet(img0,img0)
         for j in range(len(label)):
-            images.append(output[j].data)
+            # print(output[j].data.cpu().numpy())
+            # print(label[j])
+            images.append(output[j].data.cpu().numpy())
             labels.append(label[j])
+        if i%100==0:
+            print('Data creation done for %d/%d'%(i,len(train_dataloader)))
+
+    print('Image and labels done')
     neigh = KNeighborsClassifier(n_neighbors=count)
     neigh.fit(images, labels)
 
+    print('Nearest neighbours Classifier trained')
 
-    single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum
-                                transform=transform)
+    single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum, transform=transform)
+
     test_dataloader = DataLoader(single_dataset,
                 shuffle=True,
                 num_workers=8,
@@ -165,8 +173,11 @@ else:
         for j in range(len(label)):
             act.append(label[j])
             pred.append(neigh.predict(output[j]))
+        if i%100==0:
+            print('Prediction done for %d/%d'%(i,len(train_dataloader)))
+    print(classification_report(act, pred, target_names=target_names))
 
-    print(classification_report(act, pred, target_names=target_names)
+
 
 
 
