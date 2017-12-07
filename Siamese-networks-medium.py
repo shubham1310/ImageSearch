@@ -106,18 +106,27 @@ if opt.train:
                             num_workers=8,
                             batch_size=opt.batchsize)
     optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
-
+    optimizerloss = optim.Adam(criterion.parameters(),lr = 0.0005 )
     iteration_number= 0
 
     for epoch in range(0,opt.nEpochs):
         for i, data in enumerate(train_dataloader,0):
+            convnet.zero_grad()
             img0, img1 , label = data
             img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
             output1,output2 = convnet(img0),convnet(img1)
-            convnet.zero_grad()
             loss= criterion(output1,output2,label)
             loss.backward()
             optimizer.step()
+
+            criterion.zero_grad()
+            img0, img1 , label = data
+            img0, img1 , label = Variable(img0).cuda(), Variable(img1).cuda() , Variable(label).cuda()
+            output1,output2 = convnet(img0.detach()),convnet(img1.detach())
+            lossc= criterion(output1,output2,label)
+            lossc.backward()
+            optimizerloss.step()
+
             if i %100 == 0 :
                 print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
                 iteration_number +=1
