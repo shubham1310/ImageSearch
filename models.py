@@ -10,7 +10,7 @@ class SiameseNetwork2(nn.Module):
     def __init__(self,pretrain):
         super(SiameseNetwork2, self).__init__()
 
-        self.vgg = torchvision.models.vgg16(pretrained=bool(pretrain==1))
+        self.vgg = torchvision.models.vgg16() #pretrained=bool(pretrain==1)
         self.vgg.features = nn.Sequential(*(self.vgg.features[i] for i in range(31)))
 
         self.fc = nn.Sequential(
@@ -89,6 +89,23 @@ class Neuralloss(torch.nn.Module):
         loss = torch.mean( logis_criterion( finaldot ,label))
         return loss
 
+class ContrastiveLoss(torch.nn.Module):
+    """
+    Contrastive loss function.
+    Based on: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
+    """
+
+    def __init__(self, margin=2.0):
+        super(ContrastiveLoss, self).__init__()
+        self.margin = margin
+
+    def forward(self, output1, output2, label):
+        euclidean_distance = F.pairwise_distance(output1, output2)
+        loss_contrastive = torch.mean((1-label) * torch.pow(euclidean_distance, 2) +
+                                      (label) * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2))
+
+
+        return loss_contrastive
 
 # class SiameseNetwork(nn.Module):
 #     def __init__(self):

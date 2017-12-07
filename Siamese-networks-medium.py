@@ -17,7 +17,7 @@ import os
 
 import argparse
 
-from models import SiameseNetwork2, DotProduct, Neuralloss #Deconv,
+from models import SiameseNetwork2, DotProduct, Neuralloss, ContrastiveLoss #Deconv,
 from tensorboard_logger import configure, log_value
 
 from utils import PairDataset, SingleImage
@@ -26,11 +26,12 @@ from sklearn.metrics import classification_report, accuracy_score
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchsize', type=int, default=16, help='input batch size')
+parser.add_argument('--lr', type=float, default=0.0005, help='learning rate')
 parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
-parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
+# parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=int, default=1, help='all class 0/ oxford class 1')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 opt = parser.parse_args()
@@ -62,8 +63,8 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2(opt.pretrain).cuda()
-criterion = Neuralloss(opt.losstype).cuda()
-
+# criterion = Neuralloss(opt.losstype).cuda()
+criterion = ContrastiveLoss().cuda()
 
 if opt.netG != '':
     convnet.load_state_dict(torch.load(opt.netG))
@@ -106,7 +107,8 @@ if opt.train:
                             shuffle=True,
                             num_workers=8,
                             batch_size=opt.batchsize)
-    optimizer = optim.Adam(list(convnet.parameters()) + list(criterion.parameters()),lr = 0.0005 )
+    # optimizer = optim.Adam(list(convnet.parameters()) + list(criterion.parameters()),lr = 0.0005 )
+    optimizer = optim.SGD(list(convnet.parameters()) + list(criterion.parameters()), lr=opt.lr, momentum=0.9, nesterov=True)
     iteration_number= 0
 
     for epoch in range(0,opt.nEpochs):
@@ -119,7 +121,7 @@ if opt.train:
             loss.backward()
             optimizer.step()
 
-            if i %100 == 0 :
+            if i %30 == 0 :
                 print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
                 iteration_number +=1
                 log_value('Netloss', loss.data[0], iteration_number)
