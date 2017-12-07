@@ -32,6 +32,7 @@ parser.add_argument('--out', type=str, default='checkpoints', help='folder to ou
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
 parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=int, default=1, help='all class 0/ oxford class 1')
+parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 opt = parser.parse_args()
 print(opt)
 
@@ -60,7 +61,7 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 
-convnet = SiameseNetwork2().cuda()
+convnet = SiameseNetwork2(opt.pretrain).cuda()
 criterion = Neuralloss(opt.losstype).cuda()
 
 

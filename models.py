@@ -7,10 +7,10 @@ import torch.nn.functional as F
 fina_size = 128
 
 class SiameseNetwork2(nn.Module):
-    def __init__(self):
+    def __init__(self,pretrain):
         super(SiameseNetwork2, self).__init__()
 
-        self.vgg = torchvision.models.vgg16(pretrained=True)
+        self.vgg = torchvision.models.vgg16(pretrained=bool(pretrain==1))
         self.vgg.features = nn.Sequential(*(self.vgg.features[i] for i in range(31)))
 
         self.fc = nn.Sequential(
