@@ -17,7 +17,7 @@ import os
 
 import argparse
 
-from models import SiameseNetwork2, DotProduct #Deconv,
+from models import SiameseNetwork2, DotProduct, Neuralloss #Deconv,
 from tensorboard_logger import configure, log_value
 
 from utils import PairDataset, SingleImage
@@ -61,7 +61,7 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2().cuda()
-criterion = DotProduct(opt.losstype).cuda()
+criterion = Neuralloss(opt.losstype).cuda()
 
 
 if opt.netG != '':
