@@ -31,6 +31,7 @@ parser.add_argument('--netG', type=str, default='', help="path to netG (to conti
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
 parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
+parser.add_argument('--dataset', type=int, default=1, help='all class 0/ oxford class 1')
 opt = parser.parse_args()
 print(opt)
 
@@ -40,8 +41,12 @@ except OSError:
     pass
 
 
-training_dir = "./newdata/training/"
-testing_dir = "./newdata/testing/"
+if opt.dataset:
+    training_dir = "./newdata/training/"
+    testing_dir = "./newdata/testing/"
+else:
+    training_dir = "./datadiv/training/"
+    testing_dir = "./datadiv/testing/"
 
 
 
