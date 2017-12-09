@@ -33,7 +33,7 @@ parser.add_argument('--out', type=str, default='checkpoints', help='folder to ou
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
 parser.add_argument('--mainloss', type=int, default=0, help='Neural 1/ ContrastiveLoss 0')
 parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
-parser.add_argument('--dataset', type=int, default=1, help='all class 0/ oxford class 1')
+parser.add_argument('--dataset', type=str, default='oxford', help='oxford/all/other')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
 
@@ -45,12 +45,17 @@ try:
 except OSError:
     pass
 
-if opt.dataset:
+if opt.dataset=='oxford':
     training_dir = "./newdata/training/"
     testing_dir = "./newdata/testing/"
-else:
+elif opt.dataset=='other':
+    training_dir = "./otherdata/training/"
+    testing_dir = "./otherdata/testing/"
+elif opt.dataset=='all':
     training_dir = "./datadiv/training/"
     testing_dir = "./datadiv/testing/"
+else:
+    print('dataset missing')
 
 configure('logs/genimage-' + str(opt.out), flush_secs=5)
 
