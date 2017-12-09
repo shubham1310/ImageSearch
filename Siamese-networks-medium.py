@@ -20,7 +20,7 @@ import argparse
 from models import SiameseNetwork2, DotProduct, Neuralloss, ContrastiveLoss #Deconv,
 from tensorboard_logger import configure, log_value
 
-from utils import PairDataset, SingleImage
+from utils import PairDataset, SingleImage, SimplePairDataset
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -100,7 +100,7 @@ if opt.netG != '':
 
 
 if opt.train:
-    siamese_dataset = PairDataset(imageFolder=training_dir,
+    siamese_dataset = SimplePairDataset(imageFolder=training_dir,
                                 transform=transform)
 
     train_dataloader = DataLoader(siamese_dataset,
