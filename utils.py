@@ -48,10 +48,14 @@ class PairDataset(Dataset):
     
     def __len__(self):
         folders = os.listdir(self.imageFolder)
-        count =0 
+        count =[]
         for i in folders :
-            count += len(os.listdir(os.path.join(self.imageFolder,i)))
-        return count
+            count.append(len(os.listdir(os.path.join(self.imageFolder,i))))
+        s=0
+        cs= sum(count)
+        for i in count:
+            s+= i*(cs-i)
+        return s/2
 
 
 

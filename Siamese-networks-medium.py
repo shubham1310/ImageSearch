@@ -46,12 +46,15 @@ except OSError:
     pass
 
 if opt.dataset=='oxford':
+    print('oxford dataset')
     training_dir = "./newdata/training/"
     testing_dir = "./newdata/testing/"
 elif opt.dataset=='other':
+    print('other dataset')
     training_dir = "./otherdata/training/"
     testing_dir = "./otherdata/testing/"
 elif opt.dataset=='all':
+    print('combined dataset')
     training_dir = "./datadiv/training/"
     testing_dir = "./datadiv/testing/"
 else:
