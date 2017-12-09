@@ -52,7 +52,7 @@ class DotProduct(torch.nn.Module):
         z = Variable(torch.Tensor([0.5]).float()).cuda()
         normdot = dot + y.expand_as(dot)
         finaldot = normdot * z.expand_as(normdot)
-        loss = torch.mean( logis_criterion( finaldot ,label))
+        loss = torch.mean( logis_criterion( finaldot ,1-label))
         return loss
 
 
@@ -63,15 +63,15 @@ class Neuralloss(torch.nn.Module):
         self.losstype =losstype
 
         self.fc = nn.Sequential(
-            nn.Linear(2*fina_size, 256),
+            nn.Linear(3*fina_size, 256),
             nn.ReLU(inplace=True),
             nn.Linear(256, 128),
             nn.ReLU(inplace=True),
             nn.Linear(128, 1))
 
     def forward(self, output1, output2, label):
-        # output1 =  F.normalize(output1)
-        # output2 =  F.normalize(output2)
+        output1 =  F.normalize(output1)
+        output2 =  F.normalize(output2)
         if self.losstype==1:
             logis_criterion = nn.MSELoss().cuda()
             y = Variable(torch.Tensor([1]).float()).cuda()
@@ -80,7 +80,7 @@ class Neuralloss(torch.nn.Module):
             y = Variable(torch.Tensor([0.999999]).float()).cuda()
             
         # dot = torch.bmm(output1.view(-1, 1, fina_size), output2.view(-1, fina_size, 1))   
-        x = torch.cat((output1,output2),1)
+        x = torch.cat((output1,output2,output1-output2),1)
         pred = self.fc(x)  
         pred = F.sigmoid(pred)
         z = Variable(torch.Tensor([0.5]).float()).cuda()

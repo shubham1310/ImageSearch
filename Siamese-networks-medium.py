@@ -31,7 +31,8 @@ parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
-# parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
+parser.add_argument('--mainloss', type=int, default=0, help='Neural 1/ ContrastiveLoss 0')
+parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=int, default=1, help='all class 0/ oxford class 1')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
@@ -61,8 +62,13 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2(opt.pretrain).cuda()
-# criterion = Neuralloss(opt.losstype).cuda()
-criterion = ContrastiveLoss().cuda()
+# 
+if opt.mainloss:
+    print("Neuralloss")
+    criterion = Neuralloss(opt.losstype).cuda()
+else:
+    print("Contrastive loss")
+    criterion = ContrastiveLoss().cuda()
 
 if opt.netG != '':
     convnet.load_state_dict(torch.load(opt.netG))
@@ -71,9 +77,11 @@ if opt.netG != '':
 
 if opt.train:
     if opt.datasettype==0:
+        print("Same v/s different dataset")
         siamese_dataset = SimplePairDataset(imageFolder=training_dir,
                                     transform=transform)
     else:
+        print("Normal dataset")
         siamese_dataset = PairDataset(imageFolder=training_dir,
                                     transform=transform)
 
