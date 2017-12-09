@@ -43,7 +43,7 @@ class PairDataset(Dataset):
             img0 = self.transform(img0)
             img1 = self.transform(img1)
 
-        return img0, img1 , torch.from_numpy(np.array([int(folder==folder2)],dtype=np.float32))
+        return img0, img1 , torch.from_numpy(np.array([int(folder!=folder2)],dtype=np.float32))
 
     
     def __len__(self):
@@ -90,7 +90,7 @@ class SimplePairDataset(Dataset):
             img0 = self.transform(img0)
             img1 = self.transform(img1)
 
-        return img0, img1 , torch.from_numpy(np.array([int(not_same_class >= 0.5)],dtype=np.float32))
+        return img0, img1 , torch.from_numpy(np.array([int(not_same_class < 0.5)],dtype=np.float32))
 
     
     def __len__(self):
