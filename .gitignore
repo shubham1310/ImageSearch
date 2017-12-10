@@ -3,3 +3,4 @@ logs/*
 savemodel/*
 newdata/*
 otherdata/*
+*.pyc
