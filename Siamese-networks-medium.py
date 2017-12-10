@@ -146,8 +146,6 @@ else:
         img0 = Variable(img0).cuda()
         output = convnet(img0)
         for j in range(len(label)):
-            # print(output[j].data.cpu().numpy())
-            # print(label[j])
             images.append(output[j].data.cpu().numpy())
             labels.append(label[j])
         if i%100==0:
@@ -181,37 +179,5 @@ else:
             print('Prediction done for %d/%d'%(i,len(train_dataloader)))
     print(classification_report(act, pred, target_names=target_names))
     print(accuracy_score(act, pred))
-
-
-
-
-# optimizer = optim.Adam(convnet.parameters(),lr = 0.0005 )
-# singledata = dset.ImageFolder(root=training_dir,transform=transform)
-# dataloader = DataLoader(singledata, batch_size=train_batch_size, shuffle=True, num_workers=8)
-# l2criterion = nn.MSELoss().cuda()
-# deconvnet = Deconv().cuda()
-# decoptimizer = optim.Adam(deconvnet.parameters(),lr = 0.0005 )
-# for epoch in range(5):
-#     for i, data in enumerate(dataloader):
-#         inputs, _ = data
-#         inputs = Variable(inputs).cuda()
-
-#         convnet.zero_grad()
-#         deconvnet.zero_grad()
-#         # convout = convnet(inputs)
-#         # deconvout = deconvnet(convout)
-#         # loss = l2criterion(deconvout,inputs)
-#         # loss.backward()
-#         [convout,_] = convnet(inputs,inputs)
-#         deconvout = deconvnet(convout)
-#         loss = l2criterion(deconvout,inputs)
-#         loss.backward()
-#         optimizer.step()
-#         decoptimizer.step()
-
-#         if i %100 == 0 :
-#             print("[%d/%d][%d/%d] Loss: %.4f"%(epoch, train_number_epochs,i,len(dataloader) ,loss.data[0]))
-#     torch.save(convnet.state_dict(), '%s/pre_netconv%d.pth' % ('./savemodel/', epoch))
-#     torch.save(deconvnet.state_dict(), '%s/netdconv%d.pth' % ('./savemodel/', epoch))
 
 
