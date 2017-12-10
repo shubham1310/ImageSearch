@@ -152,7 +152,7 @@ else:
             print('Data creation done for %d/%d'%(i,len(train_dataloader)))
 
     print('Image and labels done')
-    neigh = KNeighborsClassifier(n_neighbors=count)
+    neigh = KNeighborsClassifier(n_neighbors=3)
     neigh.fit(images, labels)
 
     print('Nearest neighbours Classifier trained')
