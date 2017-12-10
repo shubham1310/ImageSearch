@@ -55,7 +55,7 @@ class PairDataset(Dataset):
         cs= sum(count)
         for i in count:
             s+= i*(cs-i)
-        return s/2
+        return s/1000
 
 
 

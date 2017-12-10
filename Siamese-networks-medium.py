@@ -31,7 +31,7 @@ parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
-parser.add_argument('--mainloss', type=int, default=0, help='Neural 1/ ContrastiveLoss 0')
+parser.add_argument('--mainloss', type=int, default=0, help='Neural 1/ ContrastiveLoss 0/Dot 2')
 parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=str, default='oxford', help='oxford/all/other')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
@@ -71,12 +71,15 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 convnet = SiameseNetwork2(opt.pretrain).cuda()
 # 
-if opt.mainloss:
+if opt.mainloss==1:
     print("Neuralloss")
     criterion = Neuralloss(opt.losstype).cuda()
-else:
+elif opt.mainloss==0:
     print("Contrastive loss")
     criterion = ContrastiveLoss().cuda()
+else:
+    print("Dot product loss")
+    criterion = DotProduct(opt.losstype).cuda()
 
 if opt.netG != '':
     convnet.load_state_dict(torch.load(opt.netG))
@@ -173,7 +176,7 @@ else:
             act.append(label[j])
             x=neigh.predict([output[j].data.cpu().numpy()])
             pred.append(x[0])
-            print(label[j],x[0])
+            # print(label[j],x[0])
         if i%100==0:
             print('Prediction done for %d/%d'%(i,len(train_dataloader)))
     print(classification_report(act, pred, target_names=target_names))

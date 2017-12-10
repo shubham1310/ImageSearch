@@ -80,7 +80,7 @@ class Neuralloss(torch.nn.Module):
             y = Variable(torch.Tensor([0.999999]).float()).cuda()
             
         # dot = torch.bmm(output1.view(-1, 1, fina_size), output2.view(-1, fina_size, 1))   
-        x = torch.cat((output1,output2,output1-output2),1)
+        x = torch.cat((output1,output2, torch.abs( output1-output2)),1)
         pred = self.fc(x)  
         pred = F.sigmoid(pred)
         z = Variable(torch.Tensor([0.5]).float()).cuda()
