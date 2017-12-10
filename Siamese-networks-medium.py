@@ -118,8 +118,8 @@ if opt.train:
                 print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
                 iteration_number +=1
                 log_value('Netloss', loss.data[0], iteration_number)
-            if iteration_number%1000==0:
-                torch.save(convnet.state_dict(), '%s/netconv%d.pth' % (opt.out, iteration_number/1000))
+            if iteration_number%10==0:
+                torch.save(convnet.state_dict(), '%s/netconv%d.pth' % (opt.out, iteration_number/10))
 else:
     folderenum={}
     count=1
