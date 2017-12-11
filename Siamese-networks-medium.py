@@ -112,8 +112,9 @@ if opt.train:
     optimizer = optim.SGD(convnet.parameters(), lr=opt.lr, momentum=0.9, nesterov=True)
     iteration_number= 0
 
-    epochloss=0
+    
     for epoch in range(0,opt.nEpochs):
+        epochloss=0
         iterloss=0
         for i, data in enumerate(train_dataloader,0):
             convnet.zero_grad()
@@ -190,8 +191,8 @@ else:
             x=neigh.predict([output[j].data.cpu().numpy()])
             pred.append(x[0])
             # print(label[j],x[0])
-        if i%100==0:
-            print('Prediction done for %d/%d'%(i,len(train_dataloader)))
+        if i%50==0:
+            print('Prediction done for %d/%d'%(i,len(test_dataloader)))
     print(classification_report(act, pred, target_names=target_names))
     print(accuracy_score(act, pred))
 
