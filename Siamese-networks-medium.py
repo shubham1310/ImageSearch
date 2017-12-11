@@ -33,7 +33,7 @@ parser.add_argument('--out', type=str, default='checkpoints', help='folder to ou
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
 parser.add_argument('--mainloss', type=int, default=0, help='Neural 1/ ContrastiveLoss 0/Dot 2')
 parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
-parser.add_argument('--dataset', type=str, default='oxford', help='oxford/all/other')
+parser.add_argument('--dataset', type=str, default='cal101', help='oxford/all/other/cal101/cal256')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
 
@@ -53,6 +53,14 @@ elif opt.dataset=='other':
     print('other dataset')
     training_dir = "./otherdata/training/"
     testing_dir = "./otherdata/testing/"
+elif opt.dataset=='cal101':
+    print('Caltech 101 dataset')
+    training_dir = "./cal101/training/"
+    testing_dir = "./cal101/testing/"
+elif opt.dataset=='cal256':
+    print('Caltech 256 dataset')
+    training_dir = "./cal256/training/"
+    testing_dir = "./cal256/testing/"
 elif opt.dataset=='all':
     print('combined dataset')
     training_dir = "./datadiv/training/"
@@ -65,7 +73,7 @@ configure('logs/genimage-' + str(opt.out), flush_secs=5)
 transform =transforms.Compose([transforms.Resize((224,224)),
                               transforms.ToTensor(),
                             transforms.Normalize(mean = [0.485, 0.456, 0.406],
-                            std = [0.229, 0.224, 0.225]),
+                                                std = [0.229, 0.224, 0.225]),
                               ])
 
 
@@ -92,7 +100,7 @@ if opt.train:
         siamese_dataset = SimplePairDataset(imageFolder=training_dir,
                                     transform=transform)
     else:
-        print("Normal dataset")
+        # print("Normal dataset")
         siamese_dataset = PairDataset(imageFolder=training_dir,
                                     transform=transform)
 

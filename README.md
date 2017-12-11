@@ -39,51 +39,48 @@ The best accuracy for the IIA30 dataset (+ other samples) was with contrastive d
 
 0.973684210526
 
-Best accuracy for dot loss: savemodel/newdatadotprod/netconv64.pth
+Best accuracy for dot loss: savemodel/newdatadotprod/netconv53.pth
 
-                  precision    recall  f1-score   support
+|    precision  |  recall | f1-score  | support|
+|---------|------|------| ------|
+|           other |      0.00   |   0.00  |    0.00   |      0|
+|        calendar |      1.00   |   1.00  |    1.00   |      3|
+|      ponce_book |      1.00   |   1.00  |    1.00   |      2|
+|         red_cup |      1.00   |   1.00  |    1.00   |      7|
+|            rack  |     1.00   |   1.00    |  1.00     |    7|
+|   poster_spices  |     1.00   |   1.00    |  1.00     |    2|
+|        monitor1  |     1.00   |   1.00    |  1.00     |    2|
+|          chair2  |     1.00   |   1.00    |  1.00     |    2|
+|poster_mystrands  |    1.00    |  1.00   |   1.00    |     6|
+|           cube3  |    1.00    |  0.50   |   0.67    |     4|
+|         charger  |    1.00    |  1.00   |   1.00    |     4|
+|        monitor3  |    1.00    |  1.00   |   1.00    |     4|
+|         bicycle  |     1.00   |   1.00  |    1.00    |     3|
+|          chair1  |     1.00   |   1.00  |    1.00    |     2|
+|    extinguisher  |     1.00   |   1.00  |    1.00    |     8|
+|    gray_battery  |     1.00   |   1.00  |    1.00    |     4|
+|           cube1  |     0.00   |   0.00  |    0.00    |     0|
+|           cube2  |     1.00   |   1.00  |    1.00    |     2|
+|    hartley_book  |     1.00   |   1.00  |    1.00    |     4|
+|        monitor2  |     1.00   |   1.00  |    1.00    |     3|
+|      dentifrice    |   1.00    |  1.00    |  1.00    |     5|
+|           phone    |   1.00    |  1.00    |  1.00    |     1|
+|          window    |   1.00    |  1.00    |  1.00    |     3|
+|     poster_cmpi    |   1.00    |  1.00    |  1.00    |     9|
+|         stapler   |    1.00   |   1.00   |   1.00    |     6|
+|       orbit_box   |    1.00   |   1.00   |   1.00    |     7|
+|     red_battery   |    1.00   |   0.80   |   0.89    |     5|
+|        red_wine   |    1.00   |   1.00   |   1.00    |     5|
+|          chair3     |  1.00      |1.00      |1.00    |     4|
+|     avg / total     |  1.00    |  0.97   |   0.98    |   114|
 
-           other       0.00      0.00      0.00         0
-        calendar       1.00      1.00      1.00         5
-      ponce_book       1.00      1.00      1.00         2
-         red_cup       1.00      1.00      1.00         2
-            rack       1.00      1.00      1.00         4
-   poster_spices       1.00      1.00      1.00         6
-        monitor1       1.00      1.00      1.00         2
-          chair2       1.00      1.00      1.00         3
-poster_mystrands       1.00      1.00      1.00         5
-           cube3       0.44      1.00      0.62         4
-         charger       1.00      1.00      1.00         2
-        monitor3       1.00      1.00      1.00         3
-         bicycle       1.00      1.00      1.00         7
-          chair1       1.00      1.00      1.00         2
-    extinguisher       1.00      1.00      1.00         6
-    gray_battery       1.00      1.00      1.00         3
-           cube1       1.00      0.80      0.89         5
-           cube2       1.00      0.43      0.60         7
-    hartley_book       1.00      1.00      1.00         2
-        monitor2       1.00      0.75      0.86         8
-      dentifrice       1.00      1.00      1.00         2
-           phone       1.00      1.00      1.00         4
-          window       1.00      1.00      1.00         5
-     poster_cmpi       1.00      1.00      1.00         1
-         stapler       1.00      1.00      1.00         6
-       orbit_box       1.00      1.00      1.00         4
-     red_battery       1.00      0.50      0.67         4
-        red_wine       1.00      1.00      1.00         4
-          chair3       1.00      1.00      1.00         6
-
-     avg / total       0.98      0.92      0.94       114
-
-0.921052631579
-
+0.973684210526
 
 
 Best accuracy for neural loss: savemodel/newdataneural/netconv61.pth
 
-                  precision    recall  f1-score   support                                                                                                                     
-                                                                                                                                                                              
-           other       0.57      1.00      0.73       4
+                  precision    recall  f1-score   support  
+           other       0.57      1.00      0.73         4
         calendar       0.50      0.60      0.55         5
       ponce_book       1.00      1.00      1.00         2
          red_cup       1.00      1.00      1.00         4
@@ -91,27 +88,27 @@ Best accuracy for neural loss: savemodel/newdataneural/netconv61.pth
    poster_spices       1.00      0.67      0.80         6
         monitor1       1.00      0.33      0.50         6
           chair2       1.00      1.00      1.00         3
-poster_mystrands       0.14      0.50      0.22         2                                                                                                                     
-           cube3       0.33      0.50      0.40         2                                                                                                                     
-         charger       0.75      1.00      0.86         6                                                                                                                     
-        monitor3       1.00      1.00      1.00         3                                                                                                                     
-         bicycle       0.80      1.00      0.89         4                                                                                                                     
-          chair1       0.86      1.00      0.92         6                                                                                                                     
-    extinguisher       0.00      0.00      0.00         1                                                                                                                     
-    gray_battery       1.00      0.33      0.50         6                                                                                                                     
-           cube1       0.33      0.33      0.33         3                                                                                                                     
-           cube2       1.00      1.00      1.00         7                                                                                                                     
-    hartley_book       1.00      0.50      0.67         2                                                                                                                     
-        monitor2       1.00      1.00      1.00         4                                                                                                                     
-      dentifrice       1.00      1.00      1.00         1                                                                                                                     
-           phone       1.00      1.00      1.00        11                                                                                                                     
-          window       0.50      0.40      0.44         5                                                                                                                     
-     poster_cmpi       0.00      0.00      0.00         4                                                                                                                     
-         stapler       1.00      1.00      1.00         2                                                                                                                     
-       orbit_box       0.00      0.00      0.00         1                                                                                                                     
-     red_battery       1.00      0.86      0.92         7                                                                                                                     
-        red_wine       1.00      0.50      0.67         2                                                                                                      
-          chair3       0.17      0.50      0.25         2                                                                                                                                               
+poster_mystrands       0.14      0.50      0.22         2                                                                
+           cube3       0.33      0.50      0.40         2                                                                             
+         charger       0.75      1.00      0.86         6                                                                     
+        monitor3       1.00      1.00      1.00         3                                                               
+         bicycle       0.80      1.00      0.89         4                                                                 
+          chair1       0.86      1.00      0.92         6                                                                 
+    extinguisher       0.00      0.00      0.00         1                                                                 
+    gray_battery       1.00      0.33      0.50         6                                                                
+           cube1       0.33      0.33      0.33         3                                                               
+           cube2       1.00      1.00      1.00         7                                                               
+    hartley_book       1.00      0.50      0.67         2                                                        
+        monitor2       1.00      1.00      1.00         4                                                                 
+      dentifrice       1.00      1.00      1.00         1                                                               
+           phone       1.00      1.00      1.00        11                                                                    
+          window       0.50      0.40      0.44         5                                                                   
+     poster_cmpi       0.00      0.00      0.00         4                                                              
+         stapler       1.00      1.00      1.00         2                                                                  
+       orbit_box       0.00      0.00      0.00         1                                                                
+     red_battery       1.00      0.86      0.92         7                                                              
+        red_wine       1.00      0.50      0.67         2                                                  
+          chair3       0.17      0.50      0.25         2              
      avg / total       0.80      0.75      0.74       114
 
 0.745614035088
