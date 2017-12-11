@@ -29,7 +29,7 @@ The best accuracy for the IIA30 dataset (+ other samples) was with contrastive d
 |          window   |    1.00   |   1.00      |1.00    |     4|
 |     poster_cmpi   |    1.00   |   1.00    |  1.00   |      5|
 |         stapler   |    1.00   |   1.00    |  1.00   |      4|
-|       orbit_box       1.00    |  1.00     | 1.00    |     5|
+|       orbit_box    |   1.00    |  1.00     | 1.00    |     5|
 |    red_battery    |   1.00    |  0.83     | 0.91    |     6|
 |       red_wine    |   1.00    |  1.00     | 1.00   |      2|
 |         chair3    |   1.00    |  1.00     | 1.00   |      4|
