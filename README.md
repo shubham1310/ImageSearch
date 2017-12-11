@@ -37,37 +37,9 @@ The best accuracy for the IIA30 dataset (+ other samples) was with contrastive d
 |     avg / total    |   0.99   |   0.97    |  0.98  |     114|
 
 0.973684210526
-precision	recall	f1-score	support
-other	0.00	0.00	0.00
-calendar	1.00	1.00	1.00
-ponce_book	1.00	1.00 1	.00
-red_cup	1.00	1.00 1	.00
-rack	1.00	1.00	1.00
-poster_spices	1.00	1.00	1.00
-monitor1	1.00	1.00	1.00
-chair2	1.00	1.00	1.00
-poster_mystrands	1.00	1.00	1.00
-cube3	0.83	1.00	0.91
-charger	1.00	1.00	1.00
-monitor3	1.00	1.00	1.00
-bicycle	1.00	1.00	1.00
-chair1	1.00	1.00	1.00
-extinguisher	1.00	1.00	1.00
-gray_battery	0.86	1.00	0.92
-cube1	1.00	0.50	0.67
-cube2	1.00	1.00	1.00
-hartley_book	1.00	1.00	1.00
-monitor2	1.00	0.75	0.86
-dentifrice	1.00	1.00	1.00
-phone	1.00	1.00	1.00
-window	1.00	1.00	1.00
-poster_cmpi	1.00	1.00	1.00
-stapler	1.00	1.00	1.00
-orbit_box	1.00	1.00	1.00
-red_battery	1.00	0.83	0.91
-red_wine	1.00	1.00	1.00
-chair3	1.00	1.00	1.00
-umbrella	1.00	1.00	1.00
-avg / total	0.99	0.97	0.98
 
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
 
