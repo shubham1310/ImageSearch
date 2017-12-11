@@ -2,6 +2,8 @@ In this project, I am working on Oxford dataset and doing image retrieval. I am 
 The starter code was taken from  https://github.com/harveyslash/Facial-Similarity-with-Siamese-Networks-in-Pytorch and changed as needed
 
 The best accuracy for the IIA30 dataset (+ other samples) was with contrastive divergence : savemodel/contrasMIXEDsimpledata/netconv22.pth
+
+
 |precision |recall|f1 score| support|
 |---------|------|------| ------|
 |           other   |   0.00   |   0.00    |  0.00     |    0|
