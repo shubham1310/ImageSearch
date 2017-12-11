@@ -39,6 +39,46 @@ The best accuracy for the IIA30 dataset (+ other samples) was with contrastive d
 
 0.973684210526
 
+Best accuracy for dot loss: savemodel/newdatadotprod/netconv64.pth
+
+                  precision    recall  f1-score   support
+
+           other       0.00      0.00      0.00         0
+        calendar       1.00      1.00      1.00         5
+      ponce_book       1.00      1.00      1.00         2
+         red_cup       1.00      1.00      1.00         2
+            rack       1.00      1.00      1.00         4
+   poster_spices       1.00      1.00      1.00         6
+        monitor1       1.00      1.00      1.00         2
+          chair2       1.00      1.00      1.00         3
+poster_mystrands       1.00      1.00      1.00         5
+           cube3       0.44      1.00      0.62         4
+         charger       1.00      1.00      1.00         2
+        monitor3       1.00      1.00      1.00         3
+         bicycle       1.00      1.00      1.00         7
+          chair1       1.00      1.00      1.00         2
+    extinguisher       1.00      1.00      1.00         6
+    gray_battery       1.00      1.00      1.00         3
+           cube1       1.00      0.80      0.89         5
+           cube2       1.00      0.43      0.60         7
+    hartley_book       1.00      1.00      1.00         2
+        monitor2       1.00      0.75      0.86         8
+      dentifrice       1.00      1.00      1.00         2
+           phone       1.00      1.00      1.00         4
+          window       1.00      1.00      1.00         5
+     poster_cmpi       1.00      1.00      1.00         1
+         stapler       1.00      1.00      1.00         6
+       orbit_box       1.00      1.00      1.00         4
+     red_battery       1.00      0.50      0.67         4
+        red_wine       1.00      1.00      1.00         4
+          chair3       1.00      1.00      1.00         6
+
+     avg / total       0.98      0.92      0.94       114
+
+0.921052631579
+
+
+
 Best accuracy for neural loss: savemodel/newdataneural/netconv61.pth
 
                   precision    recall  f1-score   support                                                                                                                     
