@@ -21,10 +21,12 @@ class PairDataset(Dataset):
             folder = random.choice(folders)
         folderpath = os.path.join(self.imageFolder,folder)
         imgname = random.choice(os.listdir(folderpath))
-        img0 = Image.open(os.path.join(folderpath,imgname))
-        while not(imgname[-1] =='g' and not(img0.size()[0] ==3) ):
+        img0 = self.transform(Image.open(os.path.join(folderpath,imgname)))
+        a,_,_=img0.size()
+        while not(imgname[-1] =='g') or a ==1 :
             imgname = random.choice(os.listdir(folderpath))
-            img0 = Image.open(os.path.join(folderpath,imgname))
+            img0 = self.transform(Image.open(os.path.join(folderpath,imgname)))
+            a,_,_=img0.size()
         # img0 = Image.open(os.path.join(folderpath,imgname))
 
         not_same_class = random.uniform(0,1) 
@@ -37,14 +39,16 @@ class PairDataset(Dataset):
         else:
             folderpath2 = folderpath
         imgname = random.choice(os.listdir(folderpath2))
-        img1 = Image.open(os.path.join(folderpath2,imgname))
-        while not(imgname[-1] =='g' and not(img1.size()[0] ==3) ):
+        img1 = self.transform(Image.open(os.path.join(folderpath2,imgname)))
+        a,_,_=img1.size()
+        while not(imgname[-1] =='g') or a ==1 :
             imgname = random.choice(os.listdir(folderpath2))
-            img1 = Image.open(os.path.join(folderpath2,imgname))
+            img1 = self.transform(Image.open(os.path.join(folderpath2,imgname)))
+            a,_,_=img1.size()
 
-        if self.transform is not None:
-            img0 = self.transform(img0)
-            img1 = self.transform(img1)
+        # if self.transform is not None:
+        #     img0 = self.transform(img0)
+        #     img1 = self.transform(img1)
         # print(img0.size())
         # print(img1.size())
 
