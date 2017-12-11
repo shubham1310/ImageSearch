@@ -3,7 +3,6 @@ The starter code was taken from  https://github.com/harveyslash/Facial-Similarit
 
 The best accuracy for the IIA30 dataset (+ other samples) was with contrastive divergence : savemodel/contrasMIXEDsimpledata/netconv22.pth
 
-
 |precision |recall|f1 score| support|
 |---------|------|------| ------|
 |           other   |   0.00   |   0.00    |  0.00     |    0|
@@ -39,9 +38,4 @@ The best accuracy for the IIA30 dataset (+ other samples) was with contrastive d
 |     avg / total    |   0.99   |   0.97    |  0.98  |     114|
 
 0.973684210526
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
 
