@@ -27,7 +27,7 @@ from sklearn.metrics import classification_report, accuracy_score
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchsize', type=int, default=16, help='input batch size')
 parser.add_argument('--lr', type=float, default=0.0005, help='learning rate')
-parser.add_argument('--nEpochs', type=int, default=30, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=50, help='number of epochs to train for')
 parser.add_argument('--netG', type=str, default='', help="path to netG (to continue training)")
 parser.add_argument('--out', type=str, default='checkpoints', help='folder to output model checkpoints')
 parser.add_argument('--train', type=int, default=1, help='training 1/ testing 0')
@@ -104,7 +104,9 @@ if opt.train:
     optimizer = optim.SGD(convnet.parameters(), lr=opt.lr, momentum=0.9, nesterov=True)
     iteration_number= 0
 
+    epochloss=0
     for epoch in range(0,opt.nEpochs):
+        iterloss=0
         for i, data in enumerate(train_dataloader,0):
             convnet.zero_grad()
             img0, img1 , label = data
@@ -113,13 +115,17 @@ if opt.train:
             loss= criterion(output1,output2,label)
             loss.backward()
             optimizer.step()
+            epochloss+=loss.data[0]
+            iterloss+=loss.data[0]
 
             if i %30 == 0 :
                 print("[%d/%d][%d/%d] Main Loss: %.4f"%(epoch, opt.nEpochs,i,len(train_dataloader) ,loss.data[0]))
                 iteration_number +=1
-                log_value('Netloss', loss.data[0], iteration_number)
+                log_value('Netloss', iterloss/30, iteration_number)
+                iterloss=0
             if iteration_number%10==0:
                 torch.save(convnet.state_dict(), '%s/netconv%d.pth' % (opt.out, iteration_number/10))
+        log_value('Epoch loss', epochloss/len(train_dataloader), epoch)
 else:
     folderenum={}
     count=1
