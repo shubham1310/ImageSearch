@@ -1,0 +1,4 @@
+Namespace(batchsize=32, dataset='cal256', datasettype=1, losstype=1, lr=0.0005, mainloss=0, nEpochs=50, netG='savemodel/CAL256/netconv74.pth', numneigh=3, out='savemodel/TEST', pretrain=1, train=0)
+Caltech 256 dataset
+Contrastive loss
+Enumeration done

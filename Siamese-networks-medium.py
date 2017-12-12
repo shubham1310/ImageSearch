@@ -36,6 +36,7 @@ parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=str, default='cal101', help='oxford/all/other/cal101/cal256')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
+parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
 
 opt = parser.parse_args()
 print(opt)
