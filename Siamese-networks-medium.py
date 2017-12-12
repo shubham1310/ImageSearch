@@ -14,13 +14,14 @@ import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
 import os
+import matplotlib.pyplot as plt
 
 import argparse
 
 from models import SiameseNetwork2, DotProduct, Neuralloss, ContrastiveLoss #Deconv,
 from tensorboard_logger import configure, log_value
 
-from utils import PairDataset, SingleImage, SimplePairDataset
+from utils import PairDataset, SingleImage, SimplePairDataset, plot_confusion_matrix
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -37,6 +38,7 @@ parser.add_argument('--dataset', type=str, default='cal101', help='oxford/all/ot
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
 # parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
+parser.add_argument('--cnfmat', type=int, default=0, help='Confusion matrix')
 
 opt = parser.parse_args()
 print(opt)
@@ -79,6 +81,9 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2(opt.pretrain).cuda()
+if opt.netG != '':
+    convnet.load_state_dict(torch.load(opt.netG))
+
 
 if opt.train:
     if opt.mainloss==1:
@@ -90,9 +95,6 @@ if opt.train:
     else:
         print("Dot product loss")
         criterion = DotProduct(opt.losstype).cuda()
-
-    if opt.netG != '':
-        convnet.load_state_dict(torch.load(opt.netG))
 
 
     if opt.datasettype==0:
@@ -197,5 +199,22 @@ else:
                 print('Prediction done for %d/%d'%(i,len(test_dataloader)))
         print(classification_report(act, pred, target_names=target_names))
         print(accuracy_score(act, pred))
+
+    if opt.cnfmat:
+        # Compute confusion matrix
+        cnf_matrix = confusion_matrix(y_test, y_pred)
+        np.set_printoptions(precision=2)
+
+        # Plot non-normalized confusion matrix
+        plt.figure()
+        plot_confusion_matrix(cnf_matrix, classes=target_names,
+                              title='Confusion matrix, without normalization')
+
+        # Plot normalized confusion matrix
+        plt.figure()
+        plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
+                              title='Normalized confusion matrix')
+
+        plt.show()
 
 

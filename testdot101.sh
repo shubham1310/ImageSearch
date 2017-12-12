@@ -1,3 +1,7 @@
+CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv71.pth
+CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv70.pth
+CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv69.pth
+CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv68.pth
 CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv67.pth
  CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv66.pth
  CUDA_VISIBLE_DEVICES=3 python Siamese-networks-medium.py --out savemodel/TEST --train 0 --netG savemodel/CAL101dot/netconv65.pth
