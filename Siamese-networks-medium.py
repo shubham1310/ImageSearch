@@ -36,7 +36,7 @@ parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=str, default='cal101', help='oxford/all/other/cal101/cal256')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
-parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
+# parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
 
 opt = parser.parse_args()
 print(opt)
@@ -169,32 +169,34 @@ else:
             print('Data creation done for %d/%d'%(i,len(train_dataloader)))
 
     print('Image and labels done')
-    neigh = KNeighborsClassifier(n_neighbors=3)
-    neigh.fit(images, labels)
+    for k in range(3,10):
+        print('Using %d number of neighbours'%(k) )
+        neigh = KNeighborsClassifier(n_neighbors=k)
+        neigh.fit(images, labels)
 
-    print('Nearest neighbours Classifier trained')
+        print('Nearest neighbours Classifier trained')
 
-    single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum, transform=transform)
+        single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum, transform=transform)
 
-    test_dataloader = DataLoader(single_dataset,
-                shuffle=True,
-                num_workers=8,
-                batch_size=opt.batchsize)
+        test_dataloader = DataLoader(single_dataset,
+                    shuffle=True,
+                    num_workers=8,
+                    batch_size=opt.batchsize)
 
-    act=[]
-    pred=[]
-    for i, data in enumerate(test_dataloader,0):
-        img0, label = data
-        img0= Variable(img0).cuda()
-        output = convnet(img0)
-        for j in range(len(label)):
-            act.append(label[j])
-            x=neigh.predict([output[j].data.cpu().numpy()])
-            pred.append(x[0])
-            # print(label[j],x[0])
-        if i%50==0:
-            print('Prediction done for %d/%d'%(i,len(test_dataloader)))
-    print(classification_report(act, pred, target_names=target_names))
-    print(accuracy_score(act, pred))
+        act=[]
+        pred=[]
+        for i, data in enumerate(test_dataloader,0):
+            img0, label = data
+            img0= Variable(img0).cuda()
+            output = convnet(img0)
+            for j in range(len(label)):
+                act.append(label[j])
+                x=neigh.predict([output[j].data.cpu().numpy()])
+                pred.append(x[0])
+                # print(label[j],x[0])
+            if i%50==0:
+                print('Prediction done for %d/%d'%(i,len(test_dataloader)))
+        print(classification_report(act, pred, target_names=target_names))
+        print(accuracy_score(act, pred))
 
 
