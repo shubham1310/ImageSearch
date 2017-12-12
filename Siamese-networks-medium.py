@@ -15,7 +15,7 @@ from torch import optim
 import torch.nn.functional as F
 import os
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import confusion_matrix
 import argparse
 
 from models import SiameseNetwork2, DotProduct, Neuralloss, ContrastiveLoss #Deconv,
@@ -200,21 +200,23 @@ else:
         print(classification_report(act, pred, target_names=target_names))
         print(accuracy_score(act, pred))
 
-    if opt.cnfmat:
-        # Compute confusion matrix
-        cnf_matrix = confusion_matrix(y_test, y_pred)
-        np.set_printoptions(precision=2)
+        if opt.cnfmat:
+            # Compute confusion matrix
+            cnf_matrix = confusion_matrix(act, pred)
+            np.set_printoptions(precision=2)
 
-        # Plot non-normalized confusion matrix
-        plt.figure()
-        plot_confusion_matrix(cnf_matrix, classes=target_names,
-                              title='Confusion matrix, without normalization')
+            # # Plot non-normalized confusion matrix
+            # plt.figure(figsize=(18, 18))
+            # plot_confusion_matrix(cnf_matrix, classes=target_names,
+            #                       title='Confusion matrix, without normalization')
+            # plt.savefig('cnf_unnorm.png')
 
-        # Plot normalized confusion matrix
-        plt.figure()
-        plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
-                              title='Normalized confusion matrix')
+            # Plot normalized confusion matrix
+            plt.figure(figsize=(18, 18))
+            plot_confusion_matrix(cnf_matrix, classes=target_names, normalize=True,
+                                  title='Normalized confusion matrix')
 
-        plt.show()
+            plt.show()
+            plt.savefig('cnf_norm.png')
 
 

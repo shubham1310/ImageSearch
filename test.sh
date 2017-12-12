@@ -1,9 +1,3 @@
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv96.pth                                     
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv95.pth                                     
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv94.pth                                     
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv93.pth                                     
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv92.pth                                     
-CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv91.pth                                     
 CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv90.pth                                     
 CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv89.pth                                     
 CUDA_VISIBLE_DEVICES=2 python Siamese-networks-medium.py --out savemodel/TEST --batchsize 32 --train 0 --netG savemodel/CAL101/netconv88.pth
