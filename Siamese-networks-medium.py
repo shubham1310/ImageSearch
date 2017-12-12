@@ -79,23 +79,22 @@ transform =transforms.Compose([transforms.Resize((224,224)),
 
 
 convnet = SiameseNetwork2(opt.pretrain).cuda()
-# 
-if opt.mainloss==1:
-    print("Neuralloss")
-    criterion = Neuralloss(opt.losstype).cuda()
-elif opt.mainloss==0:
-    print("Contrastive loss")
-    criterion = ContrastiveLoss().cuda()
-else:
-    print("Dot product loss")
-    criterion = DotProduct(opt.losstype).cuda()
-
-if opt.netG != '':
-    convnet.load_state_dict(torch.load(opt.netG))
-
-
 
 if opt.train:
+    if opt.mainloss==1:
+        print("Neuralloss")
+        criterion = Neuralloss(opt.losstype).cuda()
+    elif opt.mainloss==0:
+        print("Contrastive loss")
+        criterion = ContrastiveLoss().cuda()
+    else:
+        print("Dot product loss")
+        criterion = DotProduct(opt.losstype).cuda()
+
+    if opt.netG != '':
+        convnet.load_state_dict(torch.load(opt.netG))
+
+
     if opt.datasettype==0:
         print("Same v/s different dataset")
         siamese_dataset = SimplePairDataset(imageFolder=training_dir,
