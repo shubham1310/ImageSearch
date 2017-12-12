@@ -113,12 +113,115 @@ BACKGROUND_Google       0.53      0.62      0.57        13
 
 
 
+CAL101 : Dot Product best :  savemodel/CAL101dot/netconv23.pth (checked till 28)
 
+                   precision    recall  f1-score   support
 
+            other       0.75      1.00      0.86        18
+       Faces_easy       0.94      0.88      0.91        17
+            pizza       0.77      0.50      0.61        20
+          gerenuk       0.71      0.55      0.62        22
+            llama       1.00      1.00      1.00         9
+           camera       0.35      0.55      0.43        11
+            lotus       0.94      0.89      0.92        19
+        euphonium       0.68      0.79      0.73        19
+              ant       1.00      0.82      0.90        11
+          rooster       0.66      0.88      0.75        24
+           mayfly       1.00      0.75      0.86        16
+            panda       0.95      0.69      0.80        26
+          lobster       0.69      0.60      0.64        15
+         schooner       0.92      0.92      0.92        24
+       chandelier       1.00      0.83      0.91        12
+          menorah       0.89      0.89      0.89         9
+        saxophone       0.80      0.60      0.69        20
+         flamingo       0.48      0.77      0.59        13
+   crocodile_head       1.00      1.00      1.00        23
+       wheelchair       1.00      0.76      0.86        21
+            chair       1.00      0.82      0.90        17
+        dragonfly       0.89      0.89      0.89        19
+        binocular       0.18      0.55      0.27        11
+BACKGROUND_Google       0.64      0.47      0.54        15
+          octopus       0.18      0.37      0.25        19
+             crab       0.29      0.41      0.34        17
+        crocodile       1.00      0.67      0.80        21
+         mandolin       1.00      1.00      1.00        16
+      dollar_bill       1.00      0.67      0.80        18
+      stegosaurus       1.00      1.00      1.00        16
+     inline_skate       0.86      1.00      0.93        19
+           bonsai       0.84      1.00      0.91        16
+            okapi       0.62      1.00      0.76         8
+    windsor_chair       0.57      0.71      0.63        17
+      cougar_body       0.61      0.85      0.71        13
+       helicopter       1.00      0.83      0.90        23
+         hedgehog       1.00      0.95      0.97        20
+        trilobite       0.85      0.94      0.89        18
+        cellphone       1.00      1.00      1.00        18
+          dolphin       0.83      0.83      0.83        18
+         elephant       0.81      1.00      0.90        13
+              emu       1.00      1.00      1.00        15
+        accordion       1.00      0.83      0.91        18
+             ewer       1.00      0.69      0.82        13
+        sunflower       1.00      0.80      0.89        15
+             tick       0.76      1.00      0.86        22
+            brain       0.67      0.84      0.74        19
+             ibis       0.94      0.88      0.91        17
+           pagoda       1.00      0.92      0.96        12
+    flamingo_head       0.96      0.96      0.96        23
+         wild_cat       0.64      0.82      0.72        11
+           beaver       1.00      0.68      0.81        19
+            Faces       1.00      0.95      0.97        19
+      soccer_ball       0.79      0.85      0.81        13
+             lamp       0.75      0.78      0.77        23
+         yin_yang       1.00      1.00      1.00        19
+       gramophone       0.89      0.76      0.82        21
+           anchor       0.55      0.63      0.59        19
+         kangaroo       0.72      0.93      0.81        14
+         garfield       0.93      0.61      0.74        23
+           wrench       1.00      0.59      0.74        17
+           snoopy       1.00      0.62      0.77        16
+           cannon       1.00      1.00      1.00        17
+         scissors       0.89      1.00      0.94        17
+        airplanes       0.30      0.16      0.21        19
+         crayfish       0.70      0.73      0.71        22
+      ceiling_fan       0.58      0.47      0.52        15
+      water_lilly       1.00      1.00      1.00        16
+        dalmatian       0.75      0.46      0.57        13
+     brontosaurus       0.73      0.94      0.82        17
+              cup       0.61      0.85      0.71        13
+        butterfly       1.00      0.77      0.87        13
+  electric_guitar       1.00      1.00      1.00        18
+      grand_piano       0.56      0.45      0.50        11
+            rhino       0.93      1.00      0.96        13
+          minaret       1.00      0.88      0.94        25
+      cougar_face       0.57      0.67      0.62        12
+            ketch       0.56      0.75      0.64        24
+        sea_horse       1.00      1.00      1.00        13
+        metronome       1.00      0.86      0.92        14
+           pigeon       1.00      1.00      1.00        13
+       Motorbikes       0.83      0.94      0.88        16
+            watch       0.84      0.89      0.86        18
+        headphone       0.86      1.00      0.92        18
+        stop_sign       1.00      0.95      0.97        19
+          stapler       0.95      0.90      0.92        20
+       strawberry       1.00      0.93      0.97        15
+         revolver       1.00      1.00      1.00        18
+          pyramid       1.00      1.00      1.00        16
+           laptop       1.00      0.44      0.61        16
+           barrel       0.91      0.83      0.87        12
+         scorpion       1.00      0.85      0.92        13
+           buddha       1.00      0.77      0.87        13
+         platypus       0.86      0.75      0.80        16
+        hawksbill       0.62      0.91      0.74        11
+         Leopards       1.00      0.94      0.97        17
+         nautilus       0.73      0.70      0.71        23
+             bass       0.90      0.70      0.79        27
+         starfish       0.88      0.82      0.85        17
+         umbrella       0.80      1.00      0.89        16
+      joshua_tree       1.00      0.86      0.92        14
 
+      avg / total       0.84      0.81      0.82      1709
 
-
-
+0.808660035108
 
 
 
