@@ -147,7 +147,7 @@ else:
             target_names.append(folder)
         elif os.path.isdir(training_dir + folder):
             folderenum[folder] = 0
-    print(folderenum)
+    # print(folderenum)
     print('Enumeration done')
     single_dataset = SingleImage(imageFolder=training_dir, enumdict = folderenum, transform=transform)
 
