@@ -58,6 +58,7 @@ Accuracy = 0.100134634803
 The best accuracy for the IIA30 dataset (+ other samples) was with contrastive divergence : savemodel/contrasMIXEDsimpledata/netconv22.pth
 
 |precision |recall|f1 score| support|
+|---|---|---|---|
 |  avg / total    |   0.99   |   0.97    |  0.98  |     114|
 
 Accuracy = 0.973684210526
@@ -65,6 +66,7 @@ Accuracy = 0.973684210526
 Best accuracy for dot loss: savemodel/newdatadotprod/netconv53.pth
 
 |    precision  |  recall | f1-score  | support|
+|---|---|---|---|
 |     avg / total     |  1.00    |  0.97   |   0.98    |   114|
 
 Accuracy = 0.973684210526
@@ -72,7 +74,8 @@ Accuracy = 0.973684210526
 
 Best accuracy for neural loss: savemodel/newdataneural/netconv61.pth
 
-|                  precision|    recall | f1-score  | support  |       
+|                  precision|    recall | f1-score  | support  |   
+|---|---|---|---|    
 |     avg / total    |   0.80   |   0.75   |   0.74   |    114|
 
 Accuracy = 0.745614035088
