@@ -1,8 +1,10 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import torchvision
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader,Dataset
-import matplotlib.pyplot as plt
 import torchvision.utils
 import numpy as np
 import random
@@ -14,7 +16,7 @@ import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
 import os
-import matplotlib.pyplot as plt
+
 from sklearn.metrics import confusion_matrix
 import argparse
 
@@ -37,7 +39,7 @@ parser.add_argument('--losstype', type=int, default=1, help='MSE 1/ BCE 0')
 parser.add_argument('--dataset', type=str, default='cal101', help='oxford/all/other/cal101/cal256')
 parser.add_argument('--pretrain', type=int, default=1, help='pretrain 1/0 ')
 parser.add_argument('--datasettype', type=int, default=1, help='Same V/S different - 0/ Normal retrieval 1 ')
-# parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
+parser.add_argument('--numneigh', type=int, default=3, help='Number of neighbors for Classifier')
 parser.add_argument('--cnfmat', type=int, default=0, help='Confusion matrix')
 
 opt = parser.parse_args()
@@ -53,7 +55,7 @@ if opt.dataset=='oxford':
     training_dir = "./newdata/training/"
     testing_dir = "./newdata/testing/"
 elif opt.dataset=='other':
-    print('other dataset')
+    print('IIA30 dataset')
     training_dir = "./otherdata/training/"
     testing_dir = "./otherdata/testing/"
 elif opt.dataset=='cal101':
@@ -170,53 +172,53 @@ else:
             print('Data creation done for %d/%d'%(i,len(train_dataloader)))
 
     print('Image and labels done')
-    for k in range(3,10):
-        print('Using %d number of neighbours'%(k) )
-        neigh = KNeighborsClassifier(n_neighbors=k)
-        neigh.fit(images, labels)
+    # for k in range(3,10):
+    print('Using %d number of neighbours'%(opt.numneigh) )
+    neigh = KNeighborsClassifier(n_neighbors=opt.numneigh)
+    neigh.fit(images, labels)
 
-        print('Nearest neighbours Classifier trained')
+    print('Nearest neighbours Classifier trained')
 
-        single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum, transform=transform)
+    single_dataset = SingleImage(imageFolder=testing_dir, enumdict = folderenum, transform=transform)
 
-        test_dataloader = DataLoader(single_dataset,
-                    shuffle=True,
-                    num_workers=8,
-                    batch_size=opt.batchsize)
+    test_dataloader = DataLoader(single_dataset,
+                shuffle=True,
+                num_workers=8,
+                batch_size=opt.batchsize)
 
-        act=[]
-        pred=[]
-        for i, data in enumerate(test_dataloader,0):
-            img0, label = data
-            img0= Variable(img0).cuda()
-            output = convnet(img0)
-            for j in range(len(label)):
-                act.append(label[j])
-                x=neigh.predict([output[j].data.cpu().numpy()])
-                pred.append(x[0])
-                # print(label[j],x[0])
-            if i%50==0:
-                print('Prediction done for %d/%d'%(i,len(test_dataloader)))
-        print(classification_report(act, pred, target_names=target_names))
-        print(accuracy_score(act, pred))
+    act=[]
+    pred=[]
+    for i, data in enumerate(test_dataloader,0):
+        img0, label = data
+        img0= Variable(img0).cuda()
+        output = convnet(img0)
+        for j in range(len(label)):
+            act.append(label[j])
+            x=neigh.predict([output[j].data.cpu().numpy()])
+            pred.append(x[0])
+            # print(label[j],x[0])
+        if i%50==0:
+            print('Prediction done for %d/%d'%(i,len(test_dataloader)))
+    print(classification_report(act, pred, target_names=target_names))
+    print(accuracy_score(act, pred))
 
-        if opt.cnfmat:
-            # Compute confusion matrix
-            cnf_matrix = confusion_matrix(act, pred)
-            np.set_printoptions(precision=2)
+    if opt.cnfmat:
+        # Compute confusion matrix
+        cnf_matrix = confusion_matrix(act, pred)
+        np.set_printoptions(precision=2)
 
-            # # Plot non-normalized confusion matrix
-            # plt.figure(figsize=(18, 18))
-            # plot_confusion_matrix(cnf_matrix, classes=target_names,
-            #                       title='Confusion matrix, without normalization')
-            # plt.savefig('cnf_unnorm.png')
+        # # Plot non-normalized confusion matrix
+        # plt.figure()
+        # plot_confusion_matrix(cnf_matrix, classes=target_names,
+        #                       title='Confusion matrix, without normalization')
+        # plt.savefig('cnf_unnorm.png')
 
-            # Plot normalized confusion matrix
-            plt.figure(figsize=(18, 18))
-            plot_confusion_matrix(cnf_matrix, classes=target_names, normalize=True,
-                                  title='Normalized confusion matrix')
+        # Plot normalized confusion matrix
+        plt.figure(figsize=(13, 13))
+        plot_confusion_matrix(cnf_matrix, classes=target_names, normalize=True,
+                              title='Normalized confusion matrix')
 
-            plt.show()
-            plt.savefig('cnf_norm.png')
+        # plt.show()
+        plt.savefig('iia30cnf_normsmall.png')
 
 
