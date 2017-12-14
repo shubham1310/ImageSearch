@@ -25,7 +25,7 @@ list1 = os.listdir(data_path)
 datatrain = np.load('datatrain.npy')
 datatest = np.load('datatest.npy')
 max_feature = 500
-no_result = 1
+no_result = 2
 
 
 
@@ -56,7 +56,8 @@ print("4. For query images")
 sift = cv2.xfeatures2d.SIFT_create()
 total = 0
 correct = 0
-for filename in datatest:
+for filename in datatrain:
+	print(filename)
 	img = cv2.imread(filename)
 	gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 	kp, des = sift.detectAndCompute(gray,None)
@@ -78,17 +79,18 @@ for filename in datatest:
 			qdic[leafval]+=1
 		else:
 			qdic[leafval] = 1
-
-	sum1 = 0	
+	#
+	#	
+	sum1 = 0
+	print("sum")	
+	#(qdic)	
 	for el in qdic:
 		len1  = len(tfidf[el])
-		qdic[el] = qdic[el]*(math.log(float(no_images)/len1)+1)		
+		qdic[el] = qdic[el]*(math.log(float(no_images)/(len1+1)))		
 		sum1+=(qdic[el]**2)
-
 	sum1 = np.sqrt(sum1)	
 	for el in qdic:
 		qdic[el]/=sum1
-
 	maxscore = 0
 	maxim = 0
 	scorelist = dict((i,0) for i in range(no_images))	
@@ -98,10 +100,8 @@ for filename in datatest:
 		for key in d:
 			if key in qdic:
 				score+=qdic[key]*d[key]
-	
 		#print(score)
 		scorelist[el] = score
-
 	#print(scorelist)
 	aa = filename.rsplit('/')
 	aa1 = aa[len(aa)-1]
@@ -109,12 +109,11 @@ for filename in datatest:
 	clas = aa2query.split('_')[0]
 	result_dir = ''.join([result_path,aa2query])
 	#print("creating result folder:", result_dir)
-	try:
-		os.makedirs(result_dir)
-	except OSError as e:
-		if e.errno != errno.EEXIST:
-			raise
-
+	#try:
+	#	os.makedirs(result_dir)
+	#except OSError as e:
+	#	if e.errno != errno.EEXIST:
+	#		raise
 	ct = 0
 	s = [(k, scorelist[k]) for k in sorted(scorelist, key=scorelist.get, reverse=True)]
 	for im,val in s:
@@ -126,15 +125,14 @@ for filename in datatest:
 			break
 		ct+=1
 		result_file = ''.join([result_dir, "/",aa2])
-		copyfile(datatrain[im], result_file)
+		#copyfile(datatrain[im], result_file)
 		aa2pred = aa2.split('.')[0]
 		claspred = aa2.split('_')[0]
 		total+=1		
 		if clas==claspred:
 			correct+=1
+			print(clas, claspred, val, total, correct)
 		else:		
-			print(clas, claspred, total, correct)
+			print(clas, claspred, val, total, correct)
 print("accuracy", float(correct)/total, total, correct)
-#duration = 1  # second
-#freq = 440  # Hz
-#os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (duration, freq))
+
