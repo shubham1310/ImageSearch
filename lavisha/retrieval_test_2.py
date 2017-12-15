@@ -8,24 +8,22 @@ import pickle
 import math
 from pathlib import Path
 import shutil
-q1 = '/home/nfs/shubham9/test/proj/lavisha/result'
+q1 = '/home/lavisha/Downloads/cs445_Project/result'
 if os.path.isdir(q1):
 	shutil.rmtree(q1)
 
-
-
-data_path = '/home/nfs/shubham9/test/proj/lavisha/101categories'
+data_path = '/home/lavisha/Downloads/101categories'
 #query_path = '/home/lavisha/Downloads/cs445_Project/query'
-result_path = '/home/nfs/shubham9/test/proj/lavisha/result/'
-data_dir = ''.join([data_path, '/*.jpg'])
 #query_dir = ''.join([query_path, '/*.jpg'])
+result_path = '/home/lavisha/Downloads/cs445_Project/result/'
+data_dir = ''.join([data_path, '/*.jpg'])
 list1 = os.listdir(data_path) 
 
 
 datatrain = np.load('datatrain.npy')
 datatest = np.load('datatest.npy')
 max_feature = 500
-no_result = 2
+no_result = 1
 
 
 
@@ -56,8 +54,7 @@ print("4. For query images")
 sift = cv2.xfeatures2d.SIFT_create()
 total = 0
 correct = 0
-for filename in datatrain:
-	print(filename)
+for filename in datatest:
 	img = cv2.imread(filename)
 	gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 	kp, des = sift.detectAndCompute(gray,None)
@@ -79,18 +76,17 @@ for filename in datatrain:
 			qdic[leafval]+=1
 		else:
 			qdic[leafval] = 1
-	#
-	#	
-	sum1 = 0
-	print("sum")	
-	#(qdic)	
+
+	sum1 = 0	
 	for el in qdic:
 		len1  = len(tfidf[el])
-		qdic[el] = qdic[el]*(math.log(float(no_images)/(len1+1)))		
+		qdic[el] = qdic[el]*(math.log(float(no_images)/len1)+1)		
 		sum1+=(qdic[el]**2)
+
 	sum1 = np.sqrt(sum1)	
 	for el in qdic:
 		qdic[el]/=sum1
+
 	maxscore = 0
 	maxim = 0
 	scorelist = dict((i,0) for i in range(no_images))	
@@ -100,8 +96,10 @@ for filename in datatrain:
 		for key in d:
 			if key in qdic:
 				score+=qdic[key]*d[key]
+	
 		#print(score)
 		scorelist[el] = score
+
 	#print(scorelist)
 	aa = filename.rsplit('/')
 	aa1 = aa[len(aa)-1]
@@ -109,11 +107,12 @@ for filename in datatrain:
 	clas = aa2query.split('_')[0]
 	result_dir = ''.join([result_path,aa2query])
 	#print("creating result folder:", result_dir)
-	#try:
-	#	os.makedirs(result_dir)
-	#except OSError as e:
-	#	if e.errno != errno.EEXIST:
-	#		raise
+	try:
+		os.makedirs(result_dir)
+	except OSError as e:
+		if e.errno != errno.EEXIST:
+			raise
+
 	ct = 0
 	s = [(k, scorelist[k]) for k in sorted(scorelist, key=scorelist.get, reverse=True)]
 	for im,val in s:
@@ -125,14 +124,15 @@ for filename in datatrain:
 			break
 		ct+=1
 		result_file = ''.join([result_dir, "/",aa2])
-		#copyfile(datatrain[im], result_file)
+		copyfile(datatrain[im], result_file)
 		aa2pred = aa2.split('.')[0]
 		claspred = aa2.split('_')[0]
 		total+=1		
 		if clas==claspred:
 			correct+=1
-			print(clas, claspred, val, total, correct)
 		else:		
-			print(clas, claspred, val, total, correct)
+			print(clas, claspred, total, correct)
 print("accuracy", float(correct)/total, total, correct)
-
+#duration = 1  # second
+#freq = 440  # Hz
+#os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (duration, freq))
