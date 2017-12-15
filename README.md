@@ -79,3 +79,4 @@ Best accuracy for neural loss: savemodel/newdataneural/netconv61.pth
 |     avg / total    |   0.80   |   0.75   |   0.74   |    114|
 
 Accuracy = 0.745614035088
+![confusion matrix](./cnf/iia30cnf_normsmall.png)
